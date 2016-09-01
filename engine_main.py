@@ -47,7 +47,24 @@ def build_items():
         items = list_str.strip().split(' ')
     return items
         
-while True:
+def check_datetime():
+    localtime = time.localtime(time.time())
+    if localtime.tm_wday == 5 or localtime.tm_wday == 6:
+        return False
+    elif localtime.tm_hour < 9 or localtime.tm_hour > 15:
+        return False
+    elif localtime.tm_hour == 9 and localtime.tm_min < 10:
+        return False
+    elif localtime.tm_hour == 15 and localtime.tm_min > 5:
+        return False
+    elif localtime.tm_hour == 11 and localtime.tm_min > 35:
+        return False
+    elif localtime.tm_hour == 12 and localtime.tm_min < 55:
+        return False
+    else:
+        return True
+
+def output_data():
     dr = engine_data_retriever.DataRetriever()
     dp = engine_data_parser.DataParser()
     df = engine_data_formatter.DataFormatter()
@@ -58,5 +75,13 @@ while True:
 
     # sys.stdout.write('\r' + result)
     sys.stdout.write(result + "\r\n")
-    time.sleep(const.INTERVAL)
 
+output_data()
+running = True
+while running:
+    running = check_datetime()
+    if running == True:
+        output_data()
+        time.sleep(const.INTERVAL)
+    else:
+        time.sleep(60)
